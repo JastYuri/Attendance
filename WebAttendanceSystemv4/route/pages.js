@@ -290,29 +290,22 @@ router.get('/', (req, res) => {
     res.render('login'); // Render the login page
 });
 
-router.post('/manual-login', (req, res) => {
+router.post('/manual-login', async (req, res) => {
     const accessCode = req.body.code;
     console.log("Manual login route accessed");
     console.log("Access Code:", accessCode);
 
-    console.log("Preparing to execute query...");
-    db.query("SELECT 1", (err) => {
-    if (err) {
-        console.error("Database connection error:", err);
-        return res.status(500).json({ success: false, error: "Database connection issue." });
-    }
-    console.log("Database connection is active.");
-});
+    try {
+        // Check database connection
+        await db.query("SELECT 1");
+        console.log("Database connection is active. Proceeding with query...");
 
-    db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode], (error, results) => {
-        if (error) {
-            console.error("Database query error:", error);
-            return res.status(500).json({ success: false, error: "Database query failed." });
-        }
+        // Execute main query
+        const [results] = await db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode]);
 
-        console.log("Query executed. Results:", results);
+        console.log("Query results:", results);
 
-        if (results && results.length > 0) {
+        if (results.length > 0) {
             console.log("Access code found, login successful.");
             req.session.professorCode = accessCode; // Store professor code in session
             res.json({ success: true });
@@ -320,7 +313,10 @@ router.post('/manual-login', (req, res) => {
             console.log("Access code not found, login failed.");
             res.json({ success: false });
         }
-    });
+    } catch (error) {
+        console.error("Error during manual login:", error);
+        res.status(500).json({ success: false, error: "An error occurred during login." });
+    }
 });
 
 
