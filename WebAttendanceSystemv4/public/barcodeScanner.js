@@ -201,7 +201,6 @@ function stopCamera() {
     console.log("Camera stopped and scanner cleared.");
 }
 
-// Manual login function for manual code input
 function manualLogin() {
     const code = manualCodeInput.value.trim();
     if (code) {
@@ -210,7 +209,8 @@ function manualLogin() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code })
+            body: JSON.stringify({ code: code }),
+            credentials: 'same-origin'  // Ensure cookies are sent with the request
         })
         .then(response => response.json())
         .then(data => {
@@ -223,6 +223,7 @@ function manualLogin() {
         .catch(error => console.error("Error:", error));
     }
 }
+
 
 // Cleanup resources when the page is unloaded
 window.addEventListener('beforeunload', stopCamera);
