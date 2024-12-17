@@ -369,7 +369,7 @@ router.get('/dashboard', (req, res) => {
         return res.redirect('/'); // Redirect to login if no professor code is in session
     }
 
-    db.query("SELECT name FROM Professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
+    db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
         if (error) {
             return handleDbError(res, error);
         }
@@ -392,7 +392,7 @@ router.get('/scanner', (req, res) => {
         return res.redirect('/'); // Redirect to login if no professor code is in session
     }
 
-    db.query("SELECT name FROM Professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
+    db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
         if (error) {
             return handleDbError(res, error);
         }
@@ -422,7 +422,7 @@ router.get('/dashboard-attendance', (req, res) => {
 
     console.log("Fiscal Year from session:", fiscalYear, "Using fiscal year ID:", fiscalYearId); // Debug log for fiscal year
 
-    db.query("SELECT id, name FROM Professors WHERE uniqueCode = ?", [professorCode], (error, professorResults) => {
+    db.query("SELECT id, name FROM professors WHERE uniqueCode = ?", [professorCode], (error, professorResults) => {
         if (error) {
             console.error("Error fetching professor data:", error);
             return handleDbError(res, error);
@@ -797,7 +797,7 @@ router.get('/schedule', (req, res) => {
     const fiscalYearId = fiscalYear === '2024' ? 1 : (fiscalYear === '2025' ? 2 : fiscalYear);
     console.log("Fiscal Year from session:", fiscalYear); // Debug log for fiscal year
 
-    db.query("SELECT id, name FROM Professors WHERE uniqueCode = ?", [professorCode], (error, professorResults) => {
+    db.query("SELECT id, name FROM professors WHERE uniqueCode = ?", [professorCode], (error, professorResults) => {
         if (error) {
             return handleDbError(res, error);
         }
