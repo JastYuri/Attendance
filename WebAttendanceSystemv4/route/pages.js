@@ -368,30 +368,28 @@ router.post('/barcode-login', (req, res) => {
 
 
 
-// Route to render the dashboard
 router.get('/dashboard', (req, res) => {
-    const professorCode = req.session.professorCode;
+    const professorCode = req.session.professorCode; // Get session's professor code
 
-    if (!professorCode) {
-        // If no professor code is stored in the session, redirect to the login page
-        return res.redirect('/'); 
+    // Check if professor code exists in session
+    if (professorCode) {
+        db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
+            if (error) {
+                return handleDbError(res, error);
+            }
+
+            if (results && results.length > 0) {
+                const professorName = results[0].name;
+                res.render('dashboard', { professorName }); // Render dashboard page
+            } else {
+                res.render('login', { error: "Professor not found" }); // If professor not found, render login with error
+            }
+        });
+    } else {
+        res.render('login', { error: "Please log in to continue" }); // If session doesn't exist, render login page
     }
-
-    // Query the database to get professor details using the professor code
-    db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
-        if (error) {
-            return handleDbError(res, error); // Handle the database error
-        }
-
-        if (results && results.length > 0) {
-            const professorName = results[0].name; // Get professor's name from the query result
-            res.render('dashboard', { professorName }); // Render the dashboard with the professor's name
-        } else {
-            // If no professor found with the provided code, redirect to the login page
-            res.redirect('/');
-        }
-    });
 });
+
 
 
 // Route to render the dashboard
