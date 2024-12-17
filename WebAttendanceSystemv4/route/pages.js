@@ -365,13 +365,7 @@ router.post('/barcode-login', (req, res) => {
 
 
 router.get('/dashboard', (req, res) => {
-    console.log("Session in /dashboard:", req.session.professorCode);
-
-    const professorCode = req.session.professorCode;
-    if (!professorCode) {
-        console.log("No session found. Redirecting to login...");
-        return res.redirect('/');
-    }
+   
 
     db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
         if (error) {
