@@ -291,7 +291,6 @@ router.get('/', (req, res) => {
 });
 
 
-
 router.post('/manual-login', async (req, res) => {
     const accessCode = req.body.code;
     console.log("Manual login route accessed");
@@ -302,17 +301,21 @@ router.post('/manual-login', async (req, res) => {
         await db.query("SELECT 1");
         console.log("Database connection is active. Proceeding with query...");
 
-        // Execute main query
+        // Query to check if the access code exists in the professors table
         const [results] = await db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode]);
 
         console.log("Query results:", results);
 
         if (results.length > 0) {
+            // If the professor with the provided access code exists, store the code in session
             console.log("Access code found, login successful.");
             req.session.professorCode = accessCode;
-console.log("Session stored in manual login:", req.session.professorCode);
+            console.log("Session stored in manual login:", req.session.professorCode);
+
+            // Return success response to frontend
             res.json({ success: true });
         } else {
+            // If the access code doesn't match any professor, return failure
             console.log("Access code not found, login failed.");
             res.json({ success: false });
         }
@@ -370,22 +373,26 @@ router.get('/dashboard', (req, res) => {
     const professorCode = req.session.professorCode;
 
     if (!professorCode) {
-        return res.redirect('/'); // Redirect to login if no professor code is in session
+        // If no professor code is stored in the session, redirect to the login page
+        return res.redirect('/'); 
     }
 
+    // Query the database to get professor details using the professor code
     db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
         if (error) {
-            return handleDbError(res, error);
+            return handleDbError(res, error); // Handle the database error
         }
 
         if (results && results.length > 0) {
-            const professorName = results[0].name;
-            res.render('dashboard', { professorName });
+            const professorName = results[0].name; // Get professor's name from the query result
+            res.render('dashboard', { professorName }); // Render the dashboard with the professor's name
         } else {
-            res.redirect('/'); // If no professor found, redirect to login
+            // If no professor found with the provided code, redirect to the login page
+            res.redirect('/');
         }
     });
 });
+
 
 // Route to render the dashboard
 router.get('/scanner', (req, res) => {
