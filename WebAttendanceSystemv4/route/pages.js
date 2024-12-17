@@ -296,6 +296,14 @@ router.post('/manual-login', (req, res) => {
     console.log("Access Code:", accessCode);
 
     console.log("Preparing to execute query...");
+    db.query("SELECT 1", (err) => {
+    if (err) {
+        console.error("Database connection error:", err);
+        return res.status(500).json({ success: false, error: "Database connection issue." });
+    }
+    console.log("Database connection is active.");
+});
+
     db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode], (error, results) => {
         if (error) {
             console.error("Database query error:", error);
