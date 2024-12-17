@@ -371,8 +371,10 @@ router.post('/barcode-login', (req, res) => {
 router.get('/dashboard', (req, res) => {
     const professorCode = req.session.professorCode; // Get professor code from session
 
+    console.log("Professor code from session:", professorCode); // Log professor code
+
     if (professorCode) {
-        // Query database to find professor's name using the professor code
+        // Query the database to find professor's name
         db.query("SELECT name FROM professors WHERE uniqueCode = ?", [professorCode], (error, results) => {
             if (error) {
                 return handleDbError(res, error); // Handle database errors
@@ -380,13 +382,16 @@ router.get('/dashboard', (req, res) => {
 
             if (results && results.length > 0) {
                 const professorName = results[0].name;
-                // Render dashboard with professor's name passed as a dynamic value
+                console.log("Professor found:", professorName); // Log professor's name
+                // Render dashboard with professor's name
                 res.render('dashboard', { professorName });
             } else {
+                console.log("Professor not found, redirecting to login."); // Log if professor is not found
                 res.render('login', { errorMessage: "Professor not found. Please log in again." });
             }
         });
     } else {
+        console.log("No professor code in session, redirecting to login."); // Log if no session found
         res.render('login', { errorMessage: "Please log in to continue." });
     }
 });
