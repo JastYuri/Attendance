@@ -307,7 +307,8 @@ router.post('/manual-login', async (req, res) => {
 
         if (results.length > 0) {
             console.log("Access code found, login successful.");
-            req.session.professorCode = accessCode; // Store professor code in session
+            req.session.professorCode = accessCode;
+console.log("Session stored in manual login:", req.session.professorCode);
             res.json({ success: true });
         } else {
             console.log("Access code not found, login failed.");
