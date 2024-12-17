@@ -312,8 +312,12 @@ router.post('/manual-login', async (req, res) => {
             req.session.professorCode = accessCode;
             console.log("Session stored in manual login:", req.session.professorCode);
 
-            // Return success response to frontend
-            res.json({ success: true });
+            // Ensure session data is saved before responding
+            req.session.save(() => {
+                // After session is saved, return success and redirect to dashboard
+                res.json({ success: true });
+            });
+
         } else {
             // If the access code doesn't match any professor, return failure
             console.log("Access code not found, login failed.");
@@ -324,6 +328,7 @@ router.post('/manual-login', async (req, res) => {
         res.status(500).json({ success: false, error: "An error occurred during login." });
     }
 });
+
 
 
 
