@@ -293,25 +293,42 @@ router.get('/', (req, res) => {
 // Route for manual login
 router.post('/manual-login', (req, res) => {
     const accessCode = req.body.code;
+
+    // Log the request details
     console.log("Manual login route accessed");
     console.log("Access Code:", accessCode);
+
+    // Check if the access code is empty or undefined
+    if (!accessCode) {
+        console.log("No access code provided in the request.");
+        return res.json({ success: false, error: "Access code is required." });
+    }
 
     // Query the database for the professor's code
     db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode], (error, results) => {
         if (error) {
-            return handleDbError(res, error);
+            console.error("Database query error:", error);  // Log the error
+            return res.status(500).json({ success: false, error: "Database error." });
         }
+
+        // Log the query results
+        console.log("Query executed. Results:", results);
 
         if (results && results.length > 0) {
             console.log("Access code found, login successful.");
             req.session.professorCode = accessCode; // Store professor code in session
-            res.json({ success: true });
+
+            // Log the session data
+            console.log("Session data after login:", req.session);
+
+            return res.json({ success: true });
         } else {
-            console.log("Access code not found, login failed.");
-            res.json({ success: false });
+            console.log("Access code not found in the database.");
+            return res.json({ success: false, error: "Invalid access code." });
         }
     });
 });
+
 
 // Route for barcode login
 router.post('/barcode-login', (req, res) => {
