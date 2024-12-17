@@ -29,7 +29,8 @@ server.use(session({
     secret: '072203', // Secret key for session encryption, should be changed to a more secure key
     resave: false, // Don't save session if it hasn't been modified
     saveUninitialized: true, // Save a session even if it's new
-    cookie: { secure: false } // Set to true if using HTTPS to secure cookies
+   cookie: { secure: process.env.NODE_ENV === "production" ? true : false, httpOnly: true }
+ // Set to true if using HTTPS to secure cookies
 }));
 
 // Serve static files from the "public" directory
