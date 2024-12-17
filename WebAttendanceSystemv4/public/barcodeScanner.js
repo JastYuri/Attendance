@@ -215,7 +215,7 @@ function manualLogin() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = "/check-session"; // Redirect on successful login
+                window.location.href = "/dashboard"; // Redirect on successful login
             } else {
                 alert("Invalid manual code. Please try again.");
             }
