@@ -210,7 +210,7 @@ function manualLogin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ code: code }),
-            credentials: 'same-origin'  // Ensure cookies are sent with the request
+            credentials: 'include'  // Ensure cookies are sent with the request
         })
         .then(response => response.json())
         .then(data => {
