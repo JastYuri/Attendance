@@ -201,7 +201,6 @@ function stopCamera() {
     console.log("Camera stopped and scanner cleared.");
 }
 
-// Manual login function for manual code input
 function manualLogin() {
     const code = manualCodeInput.value.trim();
     if (code) {
@@ -215,15 +214,21 @@ function manualLogin() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Redirect to the dashboard if login was successful
-                window.location.href = "/dashboard";
+                // Redirect to the dashboard on successful login
+                window.location.href = '/dashboard';
             } else {
+                // Handle login failure
                 alert("Invalid manual code. Please try again.");
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error during manual login:", error);
+        });
+    } else {
+        alert("Please enter a code.");
     }
 }
+
 
 
 // Cleanup resources when the page is unloaded
