@@ -290,11 +290,7 @@ router.get('/', (req, res) => {
     res.render('login'); // Render the login page
 });
 
-router.get('/check-session', (req, res) => {
-    console.log("Session ID:", req.sessionID);
-    console.log("Session data:", req.session);
-    res.send("Session data logged to console.");
-});
+
 
 router.post('/manual-login', async (req, res) => {
     const accessCode = req.body.code;
