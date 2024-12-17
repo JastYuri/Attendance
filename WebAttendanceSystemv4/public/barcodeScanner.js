@@ -6,7 +6,11 @@ const startScannerButton = document.getElementById('startScanner');
 const stopScannerButton = document.getElementById('stopScanner');
 const videoElement = document.getElementById('camera'); // Directly reference the video element in HTML
 const barcodeInput = document.getElementById('barcodeInput');
-const manualCodeInput = document.getElementById('manualCodeInput');
+document.getElementById('manualCodeInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        manualLogin();  // Call the login function when Enter is pressed
+    }
+});
 
 // Variables for the barcode scanner and media stream
 
