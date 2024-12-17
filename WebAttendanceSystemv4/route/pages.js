@@ -297,7 +297,7 @@ router.post('/manual-login', (req, res) => {
     console.log("Access Code:", accessCode);
 
     // Query the database for the professor's code
-    db.query("SELECT * FROM Professors WHERE uniqueCode = ?", [accessCode], (error, results) => {
+    db.query("SELECT * FROM professors WHERE uniqueCode = ?", [accessCode], (error, results) => {
         if (error) {
             return handleDbError(res, error);
         }
@@ -326,7 +326,7 @@ router.post('/barcode-login', (req, res) => {
         });
     }
 
-    db.query("SELECT * FROM Professors WHERE uniqueCode = ?", [barcode], (error, results) => {
+    db.query("SELECT * FROM professors WHERE uniqueCode = ?", [barcode], (error, results) => {
         if (error) {
             console.error("Database error:", error);
             return res.status(500).json({ success: false, message: "Database error" });
