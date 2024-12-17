@@ -3,11 +3,13 @@ const path = require("path");
 const mysql = require("mysql2"); // Use mysql2 for MySQL connection
 const dotenv = require("dotenv");
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session); // For MySQL session storage
 const util = require('util');
 
 // Load environment variables from .env file
 dotenv.config({ path: './.env' });
-const server = express();
+
+const server = express(); // Initialize express server
 
 // Create a MySQL connection pool (instead of createConnection for better scalability)
 const pool = mysql.createPool({
@@ -24,20 +26,33 @@ const db = pool.promise();
 // Export the db object so it can be used in other files
 module.exports = db;
 
+// Set up session store to save sessions in MySQL
+const sessionStore = new MySQLStore({}, pool);
+
 // Middleware to handle session management
 server.use(session({
-    secret: '072203', // Secret key for session encryption, should be changed to a more secure key
+    secret: process.env.SESSION_SECRET || 'secure_default_secret', // Use .env for security
     resave: false, // Don't save session if it hasn't been modified
-    saveUninitialized: true, // Save a session even if it's new
-   cookie: { secure: process.env.NODE_ENV === "production" ? true : false, httpOnly: true }
- // Set to true if using HTTPS to secure cookies
+    saveUninitialized: false, // Don't save uninitialized sessions
+    store: sessionStore, // Store sessions in MySQL
+    cookie: { 
+        secure: process.env.NODE_ENV === "production", // Enable secure cookies in production
+        httpOnly: true, // Prevent access to cookies via JavaScript
+        sameSite: 'strict', // Prevent CSRF
+        maxAge: 1000 * 60 * 60 * 24 // 1-day session expiry
+    }
 }));
 
 // Serve static files from the "public" directory
 const publicDirectory = path.join(__dirname, 'public');
 server.use(express.static(publicDirectory));
-server.use(express.json()); // Allow the server to parse JSON data
-server.set('view engine', 'hbs'); // Set Handlebars (hbs) as the template engine
+
+// Middleware to parse JSON and URL-encoded data
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+
+// Set Handlebars (hbs) as the template engine
+server.set('view engine', 'hbs');
 
 // Connect to the database and log the connection status
 const connectDb = async () => {
