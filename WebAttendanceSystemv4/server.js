@@ -33,7 +33,7 @@ server.use(session({
 }));
 
 // Serve static files from the "public" directory
-const publicDirectory = path.join(__dirname, './public');
+const publicDirectory = path.join(__dirname, 'public');
 server.use(express.static(publicDirectory));
 server.use(express.json()); // Allow the server to parse JSON data
 server.set('view engine', 'hbs'); // Set Handlebars (hbs) as the template engine
